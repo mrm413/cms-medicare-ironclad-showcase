@@ -220,7 +220,7 @@ The `cobol-runtime` crate is pure Rust with **zero external dependencies**. It p
 
 ## Also Available: Lazarus C++17
 
-All 55 CMS Medicare programs also compile through the [Lazarus](https://lazarus-systems.com) pipeline to hardened C++17 with 100% compile success. Ironclad (Rust) and Lazarus (C++17) are complementary — same COBOL input, different target languages, different tradeoffs.
+All 55 CMS Medicare programs also compile through the [Lazarus](https://github.com/mrm413/cms-medicare-lazarus-showcase) pipeline to hardened C++17 with 100% compile success. Ironclad (Rust) and Lazarus (C++17) are complementary — same COBOL input, different target languages, different tradeoffs.
 
 ---
 
