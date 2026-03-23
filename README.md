@@ -250,4 +250,8 @@ Ironclad is part of a suite of legacy modernization tools including transpilers 
 
 ## License
 
-The original COBOL programs in `cobol_source/` are CMS (Centers for Medicare & Medicaid Services) public-domain pricer programs. The transpiled Rust output is provided for demonstration purposes. The Ironclad transpilation engine is proprietary software owned by Torsova LLC.
+Licensed under the [Apache License, Version 2.0](LICENSE).
+
+The original CMS Medicare pricer programs are U.S. Government works in the public domain.
+
+All modifications and additions -- including the Rust transpiled programs, build system, and test suite -- are Copyright 2025 Michael R. Mull / Lazarus Systems. See [NOTICE](NOTICE) for details.
