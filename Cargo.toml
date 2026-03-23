@@ -1,0 +1,9 @@
+[package]
+name = "cms-medicare-ironclad"
+version = "0.1.0"
+edition = "2021"
+description = "CMS Medicare Payment System COBOL → Rust (Ironclad transpilation output)"
+authors = ["Torsova LLC"]
+
+[dependencies]
+cobol-runtime = { path = "cobol-runtime" }
