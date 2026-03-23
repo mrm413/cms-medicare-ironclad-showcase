@@ -224,6 +224,22 @@ All 55 CMS Medicare programs also compile through the [Lazarus](https://github.c
 
 ---
 
+## Related Showcases
+
+- [CMS Medicare — Lazarus C++17](https://github.com/mrm413/cms-medicare-lazarus-showcase) -- 55 CMS Medicare pricer programs transpiled to hardened C++17 (100%)
+- [Lazarus COBOL Showcase](https://github.com/mrm413/lazarus-cobol-showcase) -- 1,607 GnuCOBOL test programs transpiled to hardened C++17 (100%)
+- [Lazarus CardDemo Showcase](https://github.com/mrm413/lazarus-carddemo-showcase) -- 44 AWS CardDemo CICS/COBOL programs transpiled to C++17 (100%)
+
+---
+
+## Related Showcases
+
+- [CMS Medicare — Lazarus C++17](https://github.com/mrm413/cms-medicare-lazarus-showcase) -- 55 CMS Medicare pricer programs transpiled to hardened C++17 (100%)
+- [GnuCOBOL Test Suite — Lazarus C++17](https://github.com/mrm413/lazarus-cobol-showcase) -- 1,607 GnuCOBOL 3.2 test programs transpiled to hardened C++17 (100%)
+- [Lazarus CardDemo Showcase](https://github.com/mrm413/lazarus-carddemo-showcase) -- 44 AWS CardDemo CICS/COBOL programs transpiled to C++17 (100%)
+
+---
+
 ## Built By
 
 **Torsova LLC** — [lazarus-systems.com](https://lazarus-systems.com)
