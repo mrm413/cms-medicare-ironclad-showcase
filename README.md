@@ -75,17 +75,23 @@ Each test case runs the original COBOL through GnuCOBOL, runs the Ironclad-gener
 
 ## Reproducing the Result
 
+The Docker harness streams a live color-coded log — green PASS ticks for every program where Rust matches COBOL byte for byte, red MISMATCH for divergences, yellow BUILD_FAIL_GNU when GnuCOBOL itself rejects mainframe-strict source. At the end you get a per-family summary (LTCAL, ESCAL, IRCAL, …).
+
 ```bash
-# Build the parity validator image
+# Build the parity validator image (one-time)
 docker build -t ironclad-cms-parity -f Dockerfile.parity .
 
-# Run the full sweep across all 30+ parity test cases
-docker run --rm ironclad-cms-parity
+# Full sweep with live color stream — pass `-it` for the green-tick experience
+docker run --rm -it ironclad-cms-parity
 
-# Run a single family
-docker run --rm ironclad-cms-parity bash parity_harness.sh --filter ESCAL
-docker run --rm ironclad-cms-parity bash parity_harness.sh --filter SNF
-docker run --rm ironclad-cms-parity bash parity_harness.sh --filter HOSP
+# Filter to one pricer family
+docker run --rm -it ironclad-cms-parity bash parity_harness.sh --filter ESCAL
+docker run --rm -it ironclad-cms-parity bash parity_harness.sh --filter LTCAL
+docker run --rm -it ironclad-cms-parity bash parity_harness.sh --filter SNF
+docker run --rm -it ironclad-cms-parity bash parity_harness.sh --filter HOSP
+
+# Plain mode (no TTY, no color, still streams — for CI pipes)
+docker run --rm ironclad-cms-parity
 ```
 
 Each run produces:

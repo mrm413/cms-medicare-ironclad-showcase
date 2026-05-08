@@ -44,10 +44,23 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-echo "============================================================"
-echo "  Ironclad CMS Medicare Parity Validator"
-echo "  GnuCOBOL ←→ Ironclad-transpiled Rust  (byte-for-byte)"
-echo "============================================================"
+# ── ANSI colors (auto-disabled if stdout isn't a TTY or NO_COLOR is set) ──
+if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+    C_RESET=$'\033[0m'
+    C_BOLD=$'\033[1m'
+    C_GREEN=$'\033[32m'
+    C_RED=$'\033[31m'
+    C_YELLOW=$'\033[33m'
+    C_CYAN=$'\033[36m'
+    C_DIM=$'\033[2m'
+else
+    C_RESET=""; C_BOLD=""; C_GREEN=""; C_RED=""; C_YELLOW=""; C_CYAN=""; C_DIM=""
+fi
+
+echo "${C_BOLD}${C_CYAN}============================================================${C_RESET}"
+echo "${C_BOLD}  Ironclad CMS Medicare Parity Validator${C_RESET}"
+echo "  ${C_DIM}GnuCOBOL  ←→  Ironclad-transpiled Rust   (byte-for-byte)${C_RESET}"
+echo "${C_BOLD}${C_CYAN}============================================================${C_RESET}"
 
 if ! command -v cobc >/dev/null 2>&1; then
     echo "ERROR: cobc not found. Install GnuCOBOL 3.x first."
@@ -141,7 +154,7 @@ for entry in "${TESTS[@]}"; do
             -o "$gnu_exe" "$driver_cob" "$called_cob" \
             >"$WORK_DIR/${idx}.gnu_err" 2>&1; then
         BFAIL_GNU=$((BFAIL_GNU + 1))
-        echo "BUILD_FAIL_GNU   $base"
+        printf "${C_YELLOW}BUILD_FAIL_GNU${C_RESET}   %s\n" "$base"
         continue
     fi
 
@@ -152,7 +165,7 @@ for entry in "${TESTS[@]}"; do
             "$rs_driver" -o "$iron_exe" \
             >"$WORK_DIR/${idx}.rust_err" 2>&1; then
         BFAIL_RUST=$((BFAIL_RUST + 1))
-        echo "BUILD_FAIL_RUST  $base"
+        printf "${C_RED}BUILD_FAIL_RUST${C_RESET}  %s\n" "$base"
         continue
     fi
 
@@ -163,17 +176,17 @@ for entry in "${TESTS[@]}"; do
 
     if [ "$gnu_rc" = "124" ] || [ "$iron_rc" = "124" ]; then
         RUN_ERR=$((RUN_ERR + 1))
-        echo "TIMEOUT          $base  (gnu_rc=$gnu_rc iron_rc=$iron_rc)"
+        printf "${C_RED}TIMEOUT${C_RESET}          %s  ${C_DIM}(gnu_rc=%s iron_rc=%s)${C_RESET}\n" "$base" "$gnu_rc" "$iron_rc"
         continue
     fi
 
     if [ "$gnu_out" = "$iron_out" ]; then
         PASS=$((PASS + 1))
         FAMILY_PASS[$family]=$((${FAMILY_PASS[$family]:-0} + 1))
-        echo "PASS             $base"
+        printf "${C_GREEN}PASS${C_RESET}             %s  ${C_DIM}[%s]${C_RESET}\n" "$base" "$family"
     else
         MISMATCH=$((MISMATCH + 1))
-        echo "MISMATCH         $base"
+        printf "${C_RED}${C_BOLD}MISMATCH${C_RESET}         %s  ${C_DIM}[%s]${C_RESET}\n" "$base" "$family"
         {
             echo "=== $base ==="
             echo "--- GnuCOBOL ---"
@@ -194,24 +207,28 @@ if [ "$PARITY_DENOM" -gt 0 ]; then
 fi
 
 echo
-echo "============================================================"
-echo "  CMS MEDICARE PARITY SUMMARY"
-echo "============================================================"
-printf "  Parity rate:   %s%%  (%d / %d)  byte-for-byte\n" "$PARITY_PCT" "$PASS" "$PARITY_DENOM"
+echo "${C_BOLD}============================================================${C_RESET}"
+echo "${C_BOLD}  CMS MEDICARE PARITY SUMMARY${C_RESET}"
+echo "${C_BOLD}============================================================${C_RESET}"
+printf "  Parity rate:   ${C_BOLD}${C_GREEN}%s%%${C_RESET}  (%d / %d)  ${C_DIM}byte-for-byte${C_RESET}\n" "$PARITY_PCT" "$PASS" "$PARITY_DENOM"
 echo "------------------------------------------------------------"
-printf "  PASS              %4d\n" "$PASS"
-printf "  MISMATCH          %4d  (logic divergence — see $MISMATCH_LOG)\n" "$MISMATCH"
-printf "  BUILD_FAIL_GNU    %4d  (cobc rejected source)\n" "$BFAIL_GNU"
-printf "  BUILD_FAIL_RUST   %4d  (rustc rejected transpiled .rs)\n" "$BFAIL_RUST"
-printf "  TIMEOUT           %4d  (one engine ran past %ss)\n" "$RUN_ERR" "$TIMEOUT_SECS"
+printf "  ${C_GREEN}PASS${C_RESET}              %4d\n" "$PASS"
+printf "  ${C_RED}MISMATCH${C_RESET}          %4d  ${C_DIM}(logic divergence — see $MISMATCH_LOG)${C_RESET}\n" "$MISMATCH"
+printf "  ${C_YELLOW}BUILD_FAIL_GNU${C_RESET}    %4d  ${C_DIM}(cobc rejected source)${C_RESET}\n" "$BFAIL_GNU"
+printf "  ${C_RED}BUILD_FAIL_RUST${C_RESET}   %4d  ${C_DIM}(rustc rejected transpiled .rs)${C_RESET}\n" "$BFAIL_RUST"
+printf "  ${C_CYAN}TIMEOUT${C_RESET}           %4d  ${C_DIM}(one engine ran past %ss)${C_RESET}\n" "$RUN_ERR" "$TIMEOUT_SECS"
 echo "------------------------------------------------------------"
-echo "  By program family:"
+echo "  ${C_BOLD}By program family:${C_RESET}"
 for family in $(echo "${!FAMILY_TOTAL[@]}" | tr ' ' '\n' | sort); do
     p=${FAMILY_PASS[$family]:-0}
     t=${FAMILY_TOTAL[$family]}
-    printf "    %-12s  %2d / %2d\n" "$family" "$p" "$t"
+    if [ "$p" = "$t" ]; then
+        printf "    ${C_GREEN}%-12s${C_RESET}  %2d / %2d  ${C_GREEN}✓${C_RESET}\n" "$family" "$p" "$t"
+    else
+        printf "    %-12s  %2d / %2d\n" "$family" "$p" "$t"
+    fi
 done
-echo "============================================================"
+echo "${C_BOLD}============================================================${C_RESET}"
 
 if [ "$MISMATCH" -gt 0 ]; then exit 1; fi
 if [ "$BFAIL_RUST" -gt 0 ]; then exit 2; fi
