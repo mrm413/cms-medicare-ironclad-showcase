@@ -22,6 +22,7 @@ pub enum DliFunc {
 }
 
 impl DliFunc {
+    #[allow(clippy::should_implement_trait)]
     pub fn from_str(s: &str) -> Option<Self> {
         match s.trim().to_uppercase().as_str() {
             "GU"   => Some(Self::GU),
@@ -223,7 +224,7 @@ impl DliContext {
             Err(_) => return Vec::new(),
         };
         BufReader::new(file).lines()
-            .filter_map(|l| l.ok())
+            .map_while(|l| l.ok())
             .filter_map(|l| Segment::from_line(&l))
             .collect()
     }
@@ -261,16 +262,16 @@ impl DliContext {
         };
 
         // Copy found segment to io_area on successful read
-        if status.is_ok() && matches!(func, DliFunc::GU | DliFunc::GN | DliFunc::GHU | DliFunc::GHN | DliFunc::GNP | DliFunc::GHNP) {
-            if self.position > 0 && self.position <= self.segments.len() {
-                let seg = &self.segments[self.position - 1];
-                io_area.name = seg.name.clone();
-                io_area.key = seg.key.clone();
-                io_area.parent_key = seg.parent_key.clone();
-                io_area.fields = seg.fields.clone();
-                self.pcb.segment_name = seg.name.clone();
-                self.pcb.key_feedback = seg.key.clone();
-            }
+        if status.is_ok() && matches!(func, DliFunc::GU | DliFunc::GN | DliFunc::GHU | DliFunc::GHN | DliFunc::GNP | DliFunc::GHNP)
+            && self.position > 0 && self.position <= self.segments.len()
+        {
+            let seg = &self.segments[self.position - 1];
+            io_area.name = seg.name.clone();
+            io_area.key = seg.key.clone();
+            io_area.parent_key = seg.parent_key.clone();
+            io_area.fields = seg.fields.clone();
+            self.pcb.segment_name = seg.name.clone();
+            self.pcb.key_feedback = seg.key.clone();
         }
 
         self.pcb.status = status.clone();

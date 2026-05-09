@@ -379,6 +379,7 @@ impl ReportContext {
 static mut REPORTS: Option<HashMap<String, ReportContext>> = None;
 
 fn reports() -> &'static mut HashMap<String, ReportContext> {
+    #[allow(static_mut_refs)]
     unsafe {
         REPORTS.get_or_insert_with(HashMap::new)
     }
