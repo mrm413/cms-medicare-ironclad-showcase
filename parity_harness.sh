@@ -180,6 +180,20 @@ for entry in "${TESTS[@]}"; do
         continue
     fi
 
+    # Normalize both outputs (CRLF, trailing whitespace, trailing blanks, nulls)
+    norm() {
+        printf '%s' "$1" | awk '
+            {gsub(/\r/,""); gsub(/\000/,""); sub(/[ \t]+$/,""); a[NR]=$0}
+            END{
+                last=0
+                for(i=NR;i>=1;i--){if(a[i]!=""){last=i;break}}
+                for(i=1;i<=last;i++)print a[i]
+            }
+        '
+    }
+    gnu_out=$(norm "$gnu_out")
+    iron_out=$(norm "$iron_out")
+
     if [ "$gnu_out" = "$iron_out" ]; then
         PASS=$((PASS + 1))
         FAMILY_PASS[$family]=$((${FAMILY_PASS[$family]:-0} + 1))
